@@ -681,6 +681,13 @@ read_incoming_link (struct context *c)
 			     &c->c2.buf,
 			     &c->c2.from);
 
+#ifdef ENABLE_XOR
+  if (c->options.xorkey > 0) {
+        encbuffer(BPTR (&c->c2.buf),status,c->options.xorkey);
+  }
+#endif
+
+
   if (socket_connection_reset (c->c2.link_socket, status))
     {
 #if PORT_SHARE
@@ -1172,6 +1179,12 @@ process_outgoing_link (struct context *c)
 
 	    /* If Socks5 over UDP, prepend header */
 	    socks_preprocess_outgoing_link (c, &to_addr, &size_delta);
+
+#ifdef ENABLE_XOR
+            if (c->options.xorkey > 0) {
+            encbuffer(BPTR(&c->c2.to_link), BLEN (&c->c2.to_link),c->options.xorkey);
+            }
+#endif
 
 	    /* Send packet */
 	    size = link_socket_write (c->c2.link_socket,

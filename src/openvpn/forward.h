@@ -35,6 +35,9 @@
 #include "openvpn.h"
 #include "occ.h"
 #include "ping.h"
+#ifdef ENABLE_XOR
+#include "xor.h"
+#endif
 
 #define TUN_OUT(c)      (BLEN(&(c)->c2.to_tun) > 0)
 #define LINK_OUT(c)     (BLEN(&(c)->c2.to_link) > 0)

@@ -65,6 +65,13 @@ AC_ARG_ENABLE(
 	,
 	[enable_lzo="yes"]
 )
+AC_ARG_ENABLE(
+        [xor],
+        [AS_HELP_STRING([--disable-xor], [disable XOR obfuscation support @<:@default=no@:>@])],
+        ,
+        [enable_xor="yes"]
+)
+
 
 AC_ARG_ENABLE(lz4,
 	[  --disable-lz4           Disable LZ4 compression support],
@@ -1108,6 +1115,9 @@ if test "${enable_comp_stub}" = "yes"; then
 	test "${enable_lzo}" = "yes" && AC_MSG_ERROR([Cannot have both comp stub and lzo enabled (use --disable-lzo)])
 	test "${enable_lz4}" = "yes" && AC_MSG_ERROR([Cannot have both comp stub and LZ4 enabled (use --disable-lz4)])
 	AC_DEFINE([ENABLE_COMP_STUB], [1], [Enable compression stub capability])
+fi
+if test "${enable_xor}" = "yes"; then
+        AC_DEFINE([ENABLE_XOR],[1], [Enable XOR obfuscation])
 fi
 
 if test "${enable_pkcs11}" = "yes"; then

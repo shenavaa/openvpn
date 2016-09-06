@@ -277,6 +277,10 @@ static const char usage_message[] =
   "                  datagrams are sent which are larger than max bytes.\n"
   "                  Adds 4 bytes of overhead per datagram.\n"
 #endif
+#ifdef ENABLE_XOR
+  "--xorkey        : Every byte in outgoing packet will be XORed against \n"
+  "                   this byte. (default=0)\n"
+#endif
   "--mssfix [n]    : Set upper bound on TCP MSS, default = tun-mtu size\n"
   "                  or --fragment max value, whichever is lower.\n"
   "--sndbuf size   : Set the TCP/UDP send buffer size.\n"
@@ -860,6 +864,9 @@ init_options (struct options *o, const bool init_gc)
 #ifdef ENABLE_PKCS11
   o->pkcs11_pin_cache_period = -1;
 #endif			/* ENABLE_PKCS11 */
+#ifdef ENABLE_XOR
+  o->xorkey = 0;
+#endif                  /* ENABLE_XOR */
 
 /* tmp is only used in P2MP server context */
 #if P2MP_SERVER
@@ -1724,6 +1731,10 @@ show_settings (const struct options *o)
   show_p2mp_parms (o);
 #endif
 
+#ifdef ENABLE_XOR
+  SHOW_INT (xorkey);
+#endif
+
 #ifdef WIN32
   SHOW_BOOL (show_net_up);
   SHOW_INT (route_method);
@@ -1958,6 +1969,10 @@ options_postprocess_verify_ce (const struct options *options, const struct conne
 #ifdef ENABLE_OCC
   if (!proto_is_udp(ce->proto) && options->mtu_test)
     msg (M_USAGE, "--mtu-test only makes sense with --proto udp");
+#endif
+#ifdef ENABLE_XOR
+  if ((options->xorkey > 255)||(options->xorkey < 0))
+          msg (M_USAGE, "--xorkey is a byte. It should be between 0 and 255.");
 #endif
 
   /* will we be pulling options from server? */
@@ -2201,6 +2216,17 @@ options_postprocess_verify_ce (const struct options *options, const struct conne
         msg (M_USAGE, "--compat-x509-names no-remapping requires --mode server");
     }
 #endif /* P2MP_SERVER */
+#ifdef ENABLE_XOR
+  else if (streq (p[0], "xorkey") && p[1])
+    {
+          VERIFY_PERMISSION (OPT_P_GENERAL);
+          if (positive_atoi (p[1]) > 255) {
+                  msg (msglevel, "--xorkey must be between 0 and 255");
+                  goto err;
+          }
+          options->xorkey = positive_atoi (p[1]);
+    }
+#endif /* ENABLE_XOR */
 
 #ifdef ENABLE_CRYPTO
 

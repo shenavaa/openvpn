@@ -185,6 +185,10 @@ struct options
   bool persist_config;
   int persist_mode;
 
+#ifdef ENABLE_XOR
+  unsigned char xorkey;
+#endif
+
 #ifdef ENABLE_CRYPTO
   const char *key_pass_file;
   bool show_ciphers;
