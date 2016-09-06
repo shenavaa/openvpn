@@ -2221,7 +2221,7 @@ options_postprocess_verify_ce (const struct options *options, const struct conne
     {
           VERIFY_PERMISSION (OPT_P_GENERAL);
           if (positive_atoi (p[1]) > 255) {
-                  msg (msglevel, "--xorkey must be between 0 and 255");
+                  msg (M_USAGE , "--xorkey must be between 0 and 255");
                   goto err;
           }
           options->xorkey = positive_atoi (p[1]);
