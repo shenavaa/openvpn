@@ -2216,17 +2216,6 @@ options_postprocess_verify_ce (const struct options *options, const struct conne
         msg (M_USAGE, "--compat-x509-names no-remapping requires --mode server");
     }
 #endif /* P2MP_SERVER */
-#ifdef ENABLE_XOR
-  else if (streq (p[0], "xorkey") && p[1])
-    {
-          VERIFY_PERMISSION (OPT_P_GENERAL);
-          if (positive_atoi (p[1]) > 255) {
-                  msg (M_USAGE , "--xorkey must be between 0 and 255");
-                  goto err;
-          }
-          options->xorkey = positive_atoi (p[1]);
-    }
-#endif /* ENABLE_XOR */
 
 #ifdef ENABLE_CRYPTO
 
@@ -4848,6 +4837,17 @@ add_option (struct options *options,
       options->gremlin = positive_atoi (p[1]);
     }
 #endif
+#ifdef ENABLE_XOR
+  else if (streq (p[0], "xorkey") && p[1])
+    {
+          VERIFY_PERMISSION (OPT_P_GENERAL);
+          if (positive_atoi (p[1]) > 255) {
+                  msg (M_USAGE , "--xorkey must be between 0 and 255");
+          }
+          options->xorkey = positive_atoi (p[1]);
+    }
+#endif /* ENABLE_XOR */
+
   else if (streq (p[0], "chroot") && p[1] && !p[2])
     {
       VERIFY_PERMISSION (OPT_P_GENERAL);
